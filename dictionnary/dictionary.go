@@ -19,13 +19,13 @@ func New(filePath string) CRUD {
 	return CRUD{filePath: filePath}
 }
 
-func (c CRUD) Add(mot, definition string) string {
+func (c CRUD) Add(mot, definition string, chAdd chan string) {
 	entry := Dico{Mot: mot, Definition: definition}
 	entries := c.readDico()
 	entries = append(entries, entry)
 	c.writeDico(entries)
 
-	return mot + " et sadefinition ajouter avec succes !"
+	chAdd <- mot + " et sa definition ajouter avec succes !"
 }
 
 func (c CRUD) Get(mot string) string {
@@ -42,7 +42,7 @@ func (c CRUD) List() []Dico {
 	return c.readDico()
 }
 
-func (c CRUD) Remove(mot string) string {
+func (c CRUD) Remove(mot string, chDelete chan string) {
 	entries := c.readDico()
 	var updatedDico []Dico
 	for _, entry := range entries {
@@ -52,7 +52,7 @@ func (c CRUD) Remove(mot string) string {
 	}
 	c.writeDico(updatedDico)
 
-	return mot + " et sa definition supprime avec succes"
+	chDelete <- mot + " et sa definition supprime avec succes"
 }
 
 func (c CRUD) readDico() []Dico {
