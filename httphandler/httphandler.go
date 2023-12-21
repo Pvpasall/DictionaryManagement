@@ -45,8 +45,8 @@ func Add(w http.ResponseWriter, req *http.Request) {
 		fmt.Fprintf(w, "Erreur lors de l'ajout du mot: %s. Reesayer !!", mot)
 	} else {
 		w.WriteHeader(http.StatusOK)
+		dict.AddAsync(mot, definition)
 		fmt.Fprintf(w, "Le mot: %s et sa definition sont ajoutes avec succes", mot)
-		dict.Add(mot, definition)
 	}
 }
 
@@ -55,12 +55,12 @@ func Remove(w http.ResponseWriter, req *http.Request) {
 	mot := req.URL.Query().Get("mot")
 
 	if mot != "" {
-		if dict.Remove(mot) {
+		if dict.Remove(mot) == true {
 			w.WriteHeader(http.StatusOK)
 			fmt.Fprintf(w, "Le mot: %s et sa definition ont ete supprime avec succes", mot)
 		} else {
 			w.WriteHeader(http.StatusBadRequest)
-			fmt.Fprintf(w, "Erreur lors de l'ajout du mot: %s. Reesayer !!", mot)
+			fmt.Fprintf(w, "Erreur lors de la suppression du mot: %s. Reesayer !!", mot)
 		}
 	}
 }

@@ -2,8 +2,10 @@ package dictionnary
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"os"
+	"time"
 )
 
 type Dico struct {
@@ -45,14 +47,28 @@ func (c CRUD) List() []Dico {
 func (c *CRUD) Remove(mot string) bool {
 	entries := c.readDico()
 	var updatedDico []Dico
+	found := false
 	for _, entry := range entries {
 		if entry.Mot != mot {
 			updatedDico = append(updatedDico, entry)
+		} else {
+			found = true
 		}
 	}
 	c.writeDico(updatedDico)
+	return found
 
-	return true
+}
+
+// Utilisation de go routine sur la fonction ADD
+
+func (c *CRUD) AddAsync(mot, definition string, chAdd chan<- string) {
+	go func() {
+		// utiliser les waitgroups
+		time.Sleep(time.Second * 5)
+		chAdd <- fmt.Sprint("Opération longue terminée pour :", mot)
+	}()
+	c.Add(mot, definition)
 }
 
 func (c CRUD) readDico() []Dico {
