@@ -15,34 +15,34 @@ type CRUD struct {
 	filePath string
 }
 
-func New(filePath string) CRUD {
-	return CRUD{filePath: filePath}
+func New(filePath string) *CRUD {
+	return &CRUD{filePath: filePath}
 }
 
-func (c CRUD) Add(mot, definition string, chAdd chan string) {
+func (c *CRUD) Add(mot, definition string) bool {
 	entry := Dico{Mot: mot, Definition: definition}
 	entries := c.readDico()
 	entries = append(entries, entry)
 	c.writeDico(entries)
 
-	chAdd <- mot + " et sa definition ajouter avec succes !"
+	return true
 }
 
-func (c CRUD) Get(mot string) string {
+func (c *CRUD) Get(mot string) string {
 	entries := c.readDico()
 	for _, entry := range entries {
 		if entry.Mot == mot {
 			return entry.Definition
 		}
 	}
-	return mot + " introuvable"
+	return "introuvable"
 }
 
 func (c CRUD) List() []Dico {
 	return c.readDico()
 }
 
-func (c CRUD) Remove(mot string, chDelete chan string) {
+func (c *CRUD) Remove(mot string) bool {
 	entries := c.readDico()
 	var updatedDico []Dico
 	for _, entry := range entries {
@@ -52,7 +52,7 @@ func (c CRUD) Remove(mot string, chDelete chan string) {
 	}
 	c.writeDico(updatedDico)
 
-	chDelete <- mot + " et sa definition supprime avec succes"
+	return true
 }
 
 func (c CRUD) readDico() []Dico {
